@@ -8,7 +8,7 @@ class Caption(models.Model):
 
 
 class Collection(models.Model):
-    category = models.CharField("Category", unique=True)
+    category = models.CharField("Category", unique=True, max_length=100)
 
     class Meta:
         ordering = ['category']
@@ -18,17 +18,20 @@ class Collection(models.Model):
 
 
 class Userx(models.Model):
-    full_name = models.CharField("Full name")
+    full_name = models.CharField("Full name", max_length=240)
     email = models.EmailField("Email")
+
+    def __str__(self) -> str:
+        return self.full_name
 
 
 class Image(models.Model):
-    filename = models.TextField("Filename")
-    title = models.CharField("Title", db_index=True)
+    filename = models.CharField("Filename", max_length=240)
+    title = models.CharField("Title", db_index=True, max_length=240)
     uuid = models.UUIDField("UUID", primary_key=True, unique=True, editable=False)
     uploaded_at = models.DateTimeField(auto_now_add=True, editable=False) 
     is_profile_image = models.BooleanField(default=False)
-    caption = models.ForeignKey(Caption, on_delete=models.SET_DEFAULT, blank=True)
+    caption = models.ForeignKey(Caption, on_delete=models.SET(""), blank=True)
     collections = models.ManyToManyField(Collection, related_name="images")
     user = models.ForeignKey(Userx, on_delete=models.CASCADE)
 
