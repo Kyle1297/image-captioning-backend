@@ -57,6 +57,17 @@ argon2 = ["argon2-cffi (>=16.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-cors-headers"
+version = "3.7.0"
+description = "django-cors-headers is a Django application for handling the server headers required for Cross-Origin Resource Sharing (CORS)."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+Django = ">=2.2"
+
+[[package]]
 name = "django-restql"
 version = "0.11.0"
 description = "Turn your API made with Django REST Framework(DRF) into a GraphQL like API."
@@ -183,7 +194,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "30b802fe0597705c225f42bb047e5cbc7daa8a7b539890c8557913cf9a5916e9"
+content-hash = "5c9f43c940fcff4ef5ded55ad52591d58d40d306a41648ef46b105ad65d2fcd5"
 
 [metadata.files]
 asgiref = [
@@ -205,6 +216,10 @@ colorama = [
 django = [
     {file = "Django-3.1.6-py3-none-any.whl", hash = "sha256:169e2e7b4839a7910b393eec127fd7cbae62e80fa55f89c6510426abf673fe5f"},
     {file = "Django-3.1.6.tar.gz", hash = "sha256:c6c0462b8b361f8691171af1fb87eceb4442da28477e12200c40420176206ba7"},
+]
+django-cors-headers = [
+    {file = "django-cors-headers-3.7.0.tar.gz", hash = "sha256:96069c4aaacace786a34ee7894ff680780ec2644e4268b31181044410fecd12e"},
+    {file = "django_cors_headers-3.7.0-py3-none-any.whl", hash = "sha256:1ac2b1213de75a251e2ba04448da15f99bcfcbe164288ae6b5ff929dc49b372f"},
 ]
 django-restql = [
     {file = "django-restql-0.11.0.tar.gz", hash = "sha256:d7458624d91ee3695e73487816107d8f11998038da683a9559a73ef629713796"},
