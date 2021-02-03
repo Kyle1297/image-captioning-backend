@@ -17,6 +17,11 @@ class Collection(models.Model):
         return self.category
 
 
+class Userx(models.Model):
+    full_name = models.CharField("Full name")
+    email = models.EmailField("Email")
+
+
 class Image(models.Model):
     filename = models.TextField("Filename")
     title = models.CharField("Title", db_index=True)
@@ -25,7 +30,7 @@ class Image(models.Model):
     is_profile_image = models.BooleanField(default=False)
     caption = models.ForeignKey(Caption, on_delete=models.SET_DEFAULT, blank=True)
     collections = models.ManyToManyField(Collection, related_name="images")
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    user = models.ForeignKey(Userx, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['uploaded_at', 'title']
