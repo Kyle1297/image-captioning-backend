@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Image, Userx, Caption, Collection
+from .models import *
 
 
 class ImageSerializer(serializers.ModelSerializer):
