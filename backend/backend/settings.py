@@ -114,7 +114,6 @@ AWS_DEFAULT_LANGUAGE_CODE = os.environ['AWS_DEFAULT_LANGUAGE_CODE']
 
 # static files
 STATIC_URL = '/staticfiles/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # AWS S3 buckets and image handling
 USE_S3 = os.environ.get('USE_S3', default=True)
