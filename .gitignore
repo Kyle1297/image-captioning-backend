@@ -1,11 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # db
-/backend/db.sqlite3
+/app/db.sqlite3
 
 # env
-/backend/.env
+/app/.env
 
 # static and media files
-/backend/staticfiles
-/backend/mediafiles
+/app/staticfiles
+/app/mediafiles
