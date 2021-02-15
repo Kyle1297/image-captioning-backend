@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
+import os
 
 
 class Collection(models.Model):
@@ -16,7 +17,7 @@ class Collection(models.Model):
 
 class Image(models.Model):
     image = models.ImageField("Image")
-    title = models.CharField("Title", db_index=True, max_length=240)
+    title = models.CharField("Title", db_index=True, max_length=240, blank=True)
     uuid = models.UUIDField("UUID", primary_key=True, unique=True, editable=False, default=uuid.uuid4)
     uploaded_at = models.DateTimeField(auto_now_add=True, editable=False) 
     is_profile_image = models.BooleanField("Profile image", default=False)
@@ -24,10 +25,17 @@ class Image(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['title']
+        ordering = ['-uploaded_at']
 
     def __str__(self) -> str:
         return self.title
+
+    def filename(self) -> dict:
+        name, extension = os.path.splitext(self.image.name)
+        return { 
+            "name": name,
+            "extension": extension,
+        }
 
 
 class Caption(models.Model):

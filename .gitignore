@@ -5,3 +5,7 @@
 
 # env
 /backend/.env
+
+# static and media files
+/backend/staticfiles
+/backend/mediafiles
