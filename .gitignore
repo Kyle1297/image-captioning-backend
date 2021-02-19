@@ -1,10 +1,6 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# db
-/app/db.sqlite3
-
 # env
-/app/.env
+/app/.env.dev
+/app/.env.prod
 
 # static and media files
 /app/staticfiles

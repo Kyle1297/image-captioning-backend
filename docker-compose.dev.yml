@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: db
+    image: postgres:13.2-alpine
+    env_file:
+      - ./app/.env.dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+
+  backend:
+    container_name: backend
+    depends_on: 
+      - db
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./app/.env.dev
+    volumes:
+      - .:/app
+    command: python app/manage.py runserver 0.0.0.0:8000
+    build:
+      context: .
+      dockerfile: backend.dev.dockerfile
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-false}
+
+volumes:
+  db_data:

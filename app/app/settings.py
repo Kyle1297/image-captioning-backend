@@ -9,9 +9,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ['SECRET_KEY']
 
-DEBUG = os.environ.get('DEBUG', default=False)
+DEBUG = int(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
 # Application definition
 INSTALLED_APPS = [
@@ -63,10 +63,24 @@ TEMPLATES = [
 WSGI_APPLICATION = 'app.wsgi.application'
 
 # Database
+POSTGRES_HOST = os.environ['POSTGRES_HOST']
+
+POSTGRES_DB = os.environ['POSTGRES_DB']
+
+POSTGRES_USER = os.environ['POSTGRES_USER']
+
+POSTGRES_PASSWORD = os.environ['POSTGRES_PASSWORD']
+
+POSTGRES_PORT = os.environ['POSTGRES_PORT']
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': POSTGRES_DB,
+        'USER': POSTGRES_USER,
+        'PASSWORD': POSTGRES_PASSWORD,
+        'HOST': POSTGRES_HOST,
+        'PORT': POSTGRES_PORT,
     }
 }
 
@@ -108,6 +122,11 @@ AWS_DEFAULT_LANGUAGE_CODE = os.environ['AWS_DEFAULT_LANGUAGE_CODE']
 
 # static files
 STATIC_URL = '/staticfiles/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# media files
+MEDIA_URL = '/mediafiles/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
 # AWS S3 buckets and image handling
 USE_S3 = os.environ.get('USE_S3', default=True)
@@ -128,6 +147,3 @@ if USE_S3 == "True":
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
     }
-else:
-    MEDIA_URL = '/mediafiles/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
