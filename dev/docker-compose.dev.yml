@@ -18,7 +18,7 @@ services:
       context: ../
       dockerfile: dev/backend.dev.dockerfile
       args:
-        INSTALL_DEV: 'false'
+        INSTALL_DEV: 'true'
     env_file:
       - .env.dev
     ports:

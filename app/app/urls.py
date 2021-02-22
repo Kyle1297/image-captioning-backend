@@ -6,10 +6,7 @@ from django.conf import settings
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    re_path(r'^api/images/$', views.images_list),
-    re_path(r'^api/images/([0-9])$', views.image_details),
+    path('admin/', admin.site.urls, name="admin"),
+    re_path(r'^api/images/$', views.images_list, name="images_list"),
+    re_path(r'^api/images/([0-9])$', views.image_details, name="image_details"),
 ]
-
-if bool(settings.DEBUG):
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

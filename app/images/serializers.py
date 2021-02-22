@@ -6,12 +6,18 @@ class ImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Image
-        fields = (
-            'image', 
-            'title', 
-            'uuid', 
-            'uploaded_at', 
-            'is_profile_image', 
-            'collections', 
-            'user',
-        )
+        fields = '__all__'
+
+
+class CollectionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Collection
+        fields = '__all__'
+
+
+class CaptionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Caption
+        fields = '__all__'
