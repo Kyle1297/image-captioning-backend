@@ -13,7 +13,8 @@ DEBUG = int(os.environ.get("DEBUG", default=0))
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
-# Application definition
+
+# application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -25,7 +26,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'images',
     'storages',
-    'django_cleanup',
 ]
 
 MIDDLEWARE = [
@@ -40,7 +40,9 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3030',
+]
 
 ROOT_URLCONF = 'app.urls'
 
@@ -62,7 +64,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
-# Database
+
+# database
 POSTGRES_HOST = os.environ['POSTGRES_HOST']
 
 POSTGRES_DB = os.environ['POSTGRES_DB']
@@ -84,7 +87,8 @@ DATABASES = {
     }
 }
 
-# Password validation
+
+# password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -100,7 +104,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
+
+# internationalization
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -111,6 +116,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+
 # AWS defaults
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 
@@ -120,30 +126,48 @@ AWS_DEFAULT_REGION = AWS_S3_REGION_NAME = os.environ['AWS_DEFAULT_REGION']
 
 AWS_DEFAULT_LANGUAGE_CODE = os.environ['AWS_DEFAULT_LANGUAGE_CODE']
 
-# static files
-STATIC_URL = '/staticfiles/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# media files
-MEDIA_URL = '/mediafiles/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+# general AWS S3 settings
+USE_S3 = os.environ.get('USE_S3', default=False)
 
-# AWS S3 buckets and image handling
-USE_S3 = os.environ.get('USE_S3', default=True)
+AWS_STATIC_BUCKET_NAME = os.environ['AWS_STATIC_BUCKET_NAME']
 
+AWS_S3_STATIC_DOMAIN = f'{AWS_STATIC_BUCKET_NAME}.s3.amazonaws.com'
+
+AWS_MEDIA_BUCKET_NAME = os.environ['AWS_MEDIA_BUCKET_NAME']
+
+AWS_DEFAULT_ACL = None
+
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+
+
+# static and media file storage in production
 if USE_S3 == "True":
-    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+    STATIC_URL = f'https://{AWS_S3_STATIC_DOMAIN}/'
+    
+    STATICFILES_STORAGE = 'app.storage_backends.StaticStorage'
 
-    S3_USER_PROFILES_FOLDER_NAME = os.environ['S3_USER_PROFILES_FOLDER_NAME']
+    DEFAULT_FILE_STORAGE = 'app.storage_backends.MediaStorage'
 
-    S3_CAPTIONING_IMAGES_FOLDER_NAME = os.environ['S3_CAPTIONING_IMAGES_FOLDER_NAME']
+    S3_CAPTIONED_IMAGES_FOLDER_NAME = 'captioned-images'
 
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    S3_USER_PROFILES_FOLDER_NAME = 'user-profiles'
 
-    AWS_S3_FILE_OVERWRITE = True
 
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+# static and media file storage in development
+else:
+    STATIC_URL = '/staticfiles/'
 
-    AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400',
-    }
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    
+    MEDIA_URL = '/mediafiles/'
+
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+
+
+# secure hosting
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

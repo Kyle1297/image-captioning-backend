@@ -1,8 +1,7 @@
-from typing import Any, Optional, Dict
+from typing import Any
 from django.contrib import admin
 from django.http import HttpRequest, HttpResponse
 from .models import *
-import os
 from django.conf import settings
 
 
@@ -56,14 +55,14 @@ class ImageAdmin(admin.ModelAdmin):
         
         # set title if blank
         if not obj.title:
-            obj.title = filename["name"]
+            obj.title = filename["name"].capitalize()
 
         # place image into correct image folder in S3 bucket
-        if settings.USE_S3 == "True":
+        if settings.USE_S3 == "True" and not change:
             if form.cleaned_data["is_profile_image"]:
                 obj.image.name = f"{settings.S3_USER_PROFILES_FOLDER_NAME}/{obj.uuid}{filename['extension']}"
             else:
-                obj.image.name = f"{settings.S3_CAPTIONING_IMAGES_FOLDER_NAME}/{obj.uuid}{filename['extension']}"
+                obj.image.name = f"{settings.S3_CAPTIONED_IMAGES_FOLDER_NAME}/{obj.uuid}{filename['extension']}"
  
         return super().save_model(request, obj, form, change)
 

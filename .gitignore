@@ -1,7 +1,13 @@
 # env
-/app/.env.dev
-/app/.env.prod
+/dev/.env.dev
+/prod/.env.prod
 
-# static and media files
-/app/staticfiles
+# media files
 /app/mediafiles
+/app/staticfiles
+
+# db backups
+/dev/db_backup/db_backup.sql
+
+# pem files
+backend-lets-encrypt.pem

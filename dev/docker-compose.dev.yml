@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  # NOTE: no db volume as want db to reset on container restart
+  db:
+    container_name: db
+    build:
+      context: .
+      dockerfile: postgres.dockerfile
+    env_file:
+      - .env.dev
+    ports:
+      - "5432:5432"
+    
+  backend:
+    container_name: backend
+    build:
+      context: ../
+      dockerfile: dev/backend.dev.dockerfile
+      args:
+        INSTALL_DEV: 'false'
+    env_file:
+      - .env.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../:/usr/src/
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on: 
+      - db
+    command: python manage.py runserver 0.0.0.0:8000

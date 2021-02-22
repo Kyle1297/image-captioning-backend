@@ -1,0 +1,14 @@
+# dev set-up files
+/scripts/entrypoint.dev.sh
+/dev/
+
+# media and static files
+/app/mediafiles/
+/app/staticfiles/
+
+# test files
+/tests/
+/app/images/tests.py
+
+# pem files
+backend-lets-encrypt.pem
