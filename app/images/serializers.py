@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 
 
+# image serializer
 class ImageSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -9,6 +10,7 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# image collections serializer
 class CollectionSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -16,6 +18,7 @@ class CollectionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# image captions serializer
 class CaptionSerializer(serializers.ModelSerializer):
 
     class Meta:

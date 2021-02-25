@@ -8,7 +8,7 @@ import os
 class Collection(models.Model):
     category = models.CharField("Category", unique=True, max_length=100, db_index=True)
     description = models.CharField("Description", max_length=240, blank=True)
-
+    
     class Meta:
         ordering = ['category']
 
@@ -22,7 +22,8 @@ class Image(models.Model):
     title = models.CharField("Title", db_index=True, max_length=240, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True, editable=False) 
     is_profile_image = models.BooleanField("Profile image", default=False)
-    collections = models.ManyToManyField(Collection, related_name="images")
+    is_private = models.BooleanField("Private image", default=False)
+    collections = models.ManyToManyField(Collection, related_name="images", default="Uncategorised")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
@@ -32,6 +33,10 @@ class Image(models.Model):
         return self.title
 
     def filename(self) -> dict:
+        """
+        Retrieves a image dile's extension and filename without
+        its extension attached to it.
+        """
         name, extension = os.path.splitext(self.image.name)
         return { 
             "name": name,
@@ -44,6 +49,7 @@ class Caption(models.Model):
     satisfactory = models.BooleanField("Satisfactory", default=True, null=True)
     corrected_text = models.CharField("Corrected Caption", blank=True, max_length=240, db_index=True)
     image = models.OneToOneField(Image, on_delete=models.CASCADE)
+    reviewer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self) -> str:
         if self.corrected_text:

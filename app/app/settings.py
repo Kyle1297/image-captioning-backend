@@ -41,7 +41,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3030',
+    'http://localhost:3000',
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -171,3 +171,10 @@ else:
 
 # secure hosting
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+
+# rest framework configurations
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
