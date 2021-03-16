@@ -1,13 +1,5 @@
 from rest_framework import serializers
-from .models import *
-
-
-# image serializer
-class ImageSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Image
-        fields = '__all__'
+from .models import Image, Collection, Caption
 
 
 # image collections serializer
@@ -23,4 +15,27 @@ class CaptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Caption
+        fields = '__all__'
+
+
+# serializer for image caption
+class ImageCaptionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Caption
+        fields = [
+            'id',
+            'text',
+            'satisfactory',
+            'corrected_text',
+            'reviewer',
+        ]
+
+
+# image serializer
+class ImageSerializer(serializers.ModelSerializer):
+    caption = ImageCaptionSerializer(read_only=True)
+
+    class Meta:
+        model = Image
         fields = '__all__'

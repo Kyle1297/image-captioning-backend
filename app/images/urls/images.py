@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .views import *
+from ..views import ImageViewSet, CollectionViewSet, CaptionViewSet
 
 
 # register app APIs
@@ -8,5 +8,5 @@ router.register('images', ImageViewSet, 'images')
 router.register('collections', CollectionViewSet, 'collections')
 router.register('captions', CaptionViewSet, 'captions')
 
-# set urls for APIs
+# set urls for images APIs
 urlpatterns = router.urls

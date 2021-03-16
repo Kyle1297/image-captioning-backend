@@ -1,6 +1,7 @@
-from .models import *
-from .serializers import *
+from ..models import Image, Collection, Caption
+from ..serializers import ImageSerializer, CollectionSerializer, CaptionSerializer
 from rest_framework import viewsets, permissions
+
 
 
 # images API
@@ -28,3 +29,4 @@ class CaptionViewSet(viewsets.ModelViewSet):
         permissions.AllowAny,
     ]
     serializer_class = CaptionSerializer
+

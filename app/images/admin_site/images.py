@@ -1,8 +1,9 @@
 from .model_inlines import CaptionAddInline, CaptionChangeInline
 from typing import Any
+import uuid
 from django.contrib import admin
 from django.http import HttpRequest, HttpResponse
-from ..models import Image
+from ..models import Image, Collection
 from django.urls import reverse
 from django.utils.html import format_html
 from django.conf import settings
@@ -43,8 +44,8 @@ class ImageAdmin(admin.ModelAdmin):
         self.fields = (
             "is_profile_image",
             "is_private",
-            'title',
             "image",
+            'title',
             "collections",
         )
         return super(ImageAdmin, self).add_view(request)
@@ -62,11 +63,11 @@ class ImageAdmin(admin.ModelAdmin):
             ]
 
         self.fields = (
-            "is_private",
-            "title",
             "image",
+            "title",
             "collections",
         )
+    
         return super(ImageAdmin, self).change_view(request, object_id)
 
     # alter default actions on save
@@ -80,13 +81,39 @@ class ImageAdmin(admin.ModelAdmin):
             obj.title = filename["name"].capitalize()
 
         # place image into correct image folder in S3 bucket
-        if settings.USE_S3 == "True" and not change:
-            if form.cleaned_data["is_profile_image"]:
-                obj.image.name = f"{settings.S3_USER_PROFILES_FOLDER_NAME}/{obj.uuid}{filename['extension']}"
+        if settings.USE_S3 == "True":
+            # add uuid if not present
+            if not obj.uuid:
+                obj.uuid = uuid.uuid4()
+            
+            # handle captioned image change
+            if change:
+                if not obj.is_profile_image:
+                    # fetch original image to check for image change
+                    original_img = Image.objects.filter(uuid=obj.uuid).first()
+
+                    # then, relocate image as appropriate
+                    if original_img.image.name != form.cleaned_data["image"]:
+                        original_img.image.delete(save=False)
+                        self.save_captioned_image(obj, filename, original_img.is_private)
+            
+            # handle new
             else:
-                obj.image.name = f"{settings.S3_CAPTIONED_IMAGES_FOLDER_NAME}/{obj.uuid}{filename['extension']}"
- 
+                # profile image vs captioned image
+                if form.cleaned_data["is_profile_image"]:
+                    obj.image.name = f"{settings.S3_USER_PROFILES_FOLDER_NAME}/{obj.uuid}{filename['extension']}"
+                else:
+                    self.save_captioned_image(obj, filename, form.cleaned_data["is_private"])
+
         return super().save_model(request, obj, form, change)
+    
+    # correctly save captioned image in s3 bucket folder
+    def save_captioned_image(self, obj: Image, filename: dict, private: bool) -> None:
+        # private vs public image
+        if private: 
+            obj.image.name = f"{settings.S3_CAPTIONED_IMAGES_FOLDER_NAME}/private/{obj.uuid}{filename['extension']}"
+        else:
+            obj.image.name = f"{settings.S3_CAPTIONED_IMAGES_FOLDER_NAME}/public/{obj.uuid}{filename['extension']}"
 
     # retrieve image's parent collections
     def get_parent_collections(self, obj: Image) -> str:
