@@ -4,7 +4,7 @@ services:
   # service for main application
   backend:
     container_name: backend
-    image: public.ecr.aws/n8p1d3q1/image-captioning:backend
+    image: 669552689704.dkr.ecr.ap-southeast-2.amazonaws.com/image-captioning:backend
     build:
       context: ../
       dockerfile: prod/backend.prod.dockerfile
@@ -17,7 +17,7 @@ services:
   # handles routing
   nginx-proxy:
     container_name: nginx-proxy
-    image: public.ecr.aws/n8p1d3q1/image-captioning:nginx-proxy
+    image: 669552689704.dkr.ecr.ap-southeast-2.amazonaws.com/image-captioning:nginx-proxy
     build: 
       context: ./nginx
       dockerfile: nginx.dockerfile

@@ -13,10 +13,8 @@ fi
 
 echo "\nSetting up database..."
 python manage.py flush --no-input
-python manage.py migrate 
-
-echo "\nImporting db backup..."
 docker exec db bash -c "psql -U $POSTGRES_USER -d $POSTGRES_DB < db_backup.sql"
+python manage.py migrate 
 
 echo "\nCollecting static files..."
 python manage.py collectstatic --no-input

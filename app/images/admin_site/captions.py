@@ -71,9 +71,9 @@ class CaptionAdmin(admin.ModelAdmin):
     # remore redundant values from image selection
     def get_form(self, request: Any, obj: Caption, change: bool, **kwargs: Any) -> None:
         form = super().get_form(request, obj=obj, change=change, **kwargs)
-        unused = [(image, image.title) for image in Image.objects.filter(caption__isnull=True)]
+        unused = []
         if change:
-            unused.append((obj.image, obj.image.title))
+            unused.append((obj.image.uuid, obj.image.title))
+        unused.extend([(image.uuid, image.title) for image in Image.objects.filter(caption__isnull=True)])
         form.base_fields['image'].choices = unused
-        print(form.base_fields)
         return form
