@@ -15,5 +15,4 @@ class CaptionChangeInline(admin.TabularInline):
         "text",
         "satisfactory",
         "corrected_text",
-        "reviewer",
     )

@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'images',
     'storages',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -136,6 +137,8 @@ AWS_S3_STATIC_DOMAIN = f'{AWS_STATIC_BUCKET_NAME}.s3.amazonaws.com'
 
 AWS_MEDIA_BUCKET_NAME = os.environ['AWS_MEDIA_BUCKET_NAME']
 
+AWS_S3_MEDIA_DOMAIN = f'{AWS_MEDIA_BUCKET_NAME}.s3.amazonaws.com'
+
 AWS_DEFAULT_ACL = None
 
 AWS_S3_OBJECT_PARAMETERS = {
@@ -176,5 +179,6 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # rest framework configurations
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 25
+    'PAGE_SIZE': 3,
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }

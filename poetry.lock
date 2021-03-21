@@ -105,6 +105,17 @@ python-versions = ">=3.6"
 Django = ">=2.2"
 
 [[package]]
+name = "django-filter"
+version = "2.4.0"
+description = "Django-filter is a reusable Django application for allowing users to filter querysets dynamically."
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+Django = ">=2.2"
+
+[[package]]
 name = "django-restql"
 version = "0.11.0"
 description = "Turn your API made with Django REST Framework(DRF) into a GraphQL like API."
@@ -342,7 +353,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "174bfbe3f4df7b4affba0541627c0751b7e841fdbff2e683ea6c1b5deb2381e8"
+content-hash = "193822b57800a3e53590733fef5fa4daaf6273fd1fac8a3fcc23a3a1940a6155"
 
 [metadata.files]
 asgiref = [
@@ -427,6 +438,10 @@ django = [
 django-cors-headers = [
     {file = "django-cors-headers-3.7.0.tar.gz", hash = "sha256:96069c4aaacace786a34ee7894ff680780ec2644e4268b31181044410fecd12e"},
     {file = "django_cors_headers-3.7.0-py3-none-any.whl", hash = "sha256:1ac2b1213de75a251e2ba04448da15f99bcfcbe164288ae6b5ff929dc49b372f"},
+]
+django-filter = [
+    {file = "django-filter-2.4.0.tar.gz", hash = "sha256:84e9d5bb93f237e451db814ed422a3a625751cbc9968b484ecc74964a8696b06"},
+    {file = "django_filter-2.4.0-py3-none-any.whl", hash = "sha256:e00d32cebdb3d54273c48f4f878f898dced8d5dfaad009438fe61ebdf535ace1"},
 ]
 django-restql = [
     {file = "django-restql-0.11.0.tar.gz", hash = "sha256:d7458624d91ee3695e73487816107d8f11998038da683a9559a73ef629713796"},

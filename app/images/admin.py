@@ -7,3 +7,5 @@ from .models import *
 admin.site.register(Collection, CollectionAdmin)
 admin.site.register(Image, ImageAdmin)
 admin.site.register(Caption, CaptionAdmin)
+admin.site.register(Comment, CommentAdmin)
+admin.site.register(Profile, ProfileAdmin)

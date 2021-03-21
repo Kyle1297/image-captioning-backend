@@ -3,7 +3,7 @@ from typing import Any
 import uuid
 from django.contrib import admin
 from django.http import HttpRequest, HttpResponse
-from ..models import Image, Collection
+from ..models import Image
 from django.urls import reverse
 from django.utils.html import format_html
 from django.conf import settings
@@ -13,27 +13,30 @@ class ImageAdmin(admin.ModelAdmin):
     # set list display and functionality
     list_display = (
         "title",  
-        "get_parent_collections", 
+        "get_collections", 
         "view_caption_link",
+        'get_total_likes',
+        'get_total_dislikes',
         "is_profile_image",
         "is_private",
-        "view_user_link", 
+        "view_uploader_link", 
         "uploaded_at",
     )
     list_filter = (
-        "collections",
         "is_profile_image",
         "is_private",
     )
     search_fields = [
         "title",
-        "user",
-        "collections",
+        "uploader__username",
+        "collections__category",
     ]
 
     # alter change/create view
     filter_horizontal = (
         "collections",
+        "likes",
+        "dislikes",
     )
 
     # alter the creation view
@@ -66,6 +69,8 @@ class ImageAdmin(admin.ModelAdmin):
             "image",
             "title",
             "collections",
+            "likes",
+            "dislikes",
         )
     
         return super(ImageAdmin, self).change_view(request, object_id)
@@ -73,7 +78,7 @@ class ImageAdmin(admin.ModelAdmin):
     # alter default actions on save
     def save_model(self, request: Any, obj: Image, form: Any, change: bool) -> None:
         # set user and retrieve image
-        obj.user = request.user
+        obj.uploader = request.user
         filename = obj.filename()
         
         # set title if blank
@@ -116,17 +121,17 @@ class ImageAdmin(admin.ModelAdmin):
             obj.image.name = f"{settings.S3_CAPTIONED_IMAGES_FOLDER_NAME}/public/{obj.uuid}{filename['extension']}"
 
     # retrieve image's parent collections
-    def get_parent_collections(self, obj: Image) -> str:
+    def get_collections(self, obj: Image) -> str:
         return ", ".join([collection.category for collection in obj.collections.all()])
-    get_parent_collections.short_description = "Collections"
+    get_collections.short_description = "Collections"
 
     # allow user to view and redirect to image's publisher
-    def view_user_link(self, obj: Image) -> str:
+    def view_uploader_link(self, obj: Image) -> str:
         url = (
-            reverse("admin:auth_user_change", kwargs={'object_id': obj.user.id})
+            reverse("admin:auth_user_change", kwargs={'object_id': obj.uploader.id})
         )
-        return format_html(f'<a href="{url}">{obj.user}</a>')
-    view_user_link.short_description = "User"
+        return format_html(f'<a href="{url}">{obj.uploader}</a>')
+    view_uploader_link.short_description = "Uploader"
 
     # allow user to view and redirect to image's caption
     def view_caption_link(self, obj: Image) -> str:
@@ -135,3 +140,13 @@ class ImageAdmin(admin.ModelAdmin):
         )
         return format_html(f'<a href="{url}">{obj.caption}</a>')
     view_caption_link.short_description = "Caption"
+
+    # show number of likes
+    def get_total_likes(self, obj: Image) -> int:
+        return obj.total_likes()
+    get_total_likes.short_description = "Likes"
+
+    # show number of dislikes
+    def get_total_dislikes(self, obj: Image) -> int:
+        return obj.total_dislikes()
+    get_total_dislikes.short_description = "Dislikes"

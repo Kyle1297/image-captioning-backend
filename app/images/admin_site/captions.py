@@ -13,7 +13,6 @@ class CaptionAdmin(admin.ModelAdmin):
         "satisfactory",
         "view_image_link",
         "corrected_text",
-        "view_reviewer_link",
     )
     list_filter = (
         "satisfactory",
@@ -22,7 +21,6 @@ class CaptionAdmin(admin.ModelAdmin):
         "text",
         "corrected_text",
         "image__title",
-        "reviewer",
     ]
 
     # alter the creation view
@@ -36,20 +34,12 @@ class CaptionAdmin(admin.ModelAdmin):
    # alter the change view
     def change_view(self, request: HttpRequest, object_id: str) -> HttpResponse:
         self.fields = (
-            "text",
             "satisfactory",
+            "text",
             "corrected_text",
             "image",
         )
         return super(CaptionAdmin, self).change_view(request, object_id)
-
-    # alter default actions on save
-    def save_model(self, request: Any, obj: Caption, form: Any, change: bool) -> None:
-        # set user if caption corrected
-        if change and obj.corrected_text:
-            obj.reviewer = request.user
-        
-        return super().save_model(request, obj, form, change)
 
     # allow users to view and redirect to the caption's image
     def view_image_link(self, obj: Caption) -> str:
@@ -58,15 +48,6 @@ class CaptionAdmin(admin.ModelAdmin):
         )
         return format_html(f'<a href="{url}">{obj.image}</a>')
     view_image_link.short_description = "Image"
-
-    # allow user to view and redirect to caption's reviewer
-    def view_reviewer_link(self, obj: Caption) -> str:
-        if obj.reviewer:
-            url = (
-                reverse("admin:auth_user_change", kwargs={'object_id': obj.reviewer.id})
-            )
-            return format_html(f'<a href="{url}">{obj.reviewer}</a>')
-    view_reviewer_link.short_description = "Reviewer"
 
     # remore redundant values from image selection
     def get_form(self, request: Any, obj: Caption, change: bool, **kwargs: Any) -> None:
