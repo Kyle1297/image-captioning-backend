@@ -7,7 +7,7 @@ from .captions import LimitedCaptionSerializer
 
 
 class ImageSerializer(serializers.ModelSerializer):
-    caption = LimitedCaptionSerializer(read_only=True)
+    caption = LimitedCaptionSerializer()
     uploader = LimitedUserSerializer(read_only=True)
     comments = LimitedCommentSerializer(read_only=True, many=True)
     collections = LimitedCollectionSerializer(read_only=True, many=True)

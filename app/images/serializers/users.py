@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    liked_categories = LimitedCollectionSerializer(read_only=True, many=True)
+    liked_categories = LimitedCollectionSerializer(many=True)
 
     class Meta:
         model = Profile

@@ -2,57 +2,69 @@ from .filters import ImageFilterSet
 from .permissions import IsPrivateUploader
 from ..models import Image, Collection, Caption, Comment
 from ..serializers import ImageSerializer, CollectionSerializer, CaptionSerializer, UserSerializer, CommentSerializer
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, exceptions
 from django.contrib.auth.models import User
 
 
-# images API
+default_http_methods = ['get', 'options', 'head', 'post', 'patch', 'delete']
+
 class ImageViewSet(viewsets.ModelViewSet):
-    queryset = Image.objects.all()
-    permission_classes = (
+    permission_classes = [
         IsPrivateUploader,
-    )
+    ]
     serializer_class = ImageSerializer
     filterset_class = ImageFilterSet
+    http_method_names = default_http_methods
+
+    def get_queryset(self):
+        public = Image.objects.filter(is_private=False)
+        if not self.request.user.is_anonymous:
+            private = Image.objects.filter(uploader=self.request.user)
+            return public | private
+        return public
 
     def perform_create(self, serializer):
         serializer.save(uploader=self.request.user)
 
 
-# image collections API
 class CollectionViewSet(viewsets.ModelViewSet):
     queryset = Collection.objects.all()
     permission_classes = [
         permissions.AllowAny,
     ]
     serializer_class = CollectionSerializer
+    http_method_names = default_http_methods
     pagination_class = None
 
 
-# image captions API
 class CaptionViewSet(viewsets.ModelViewSet):
     queryset = Caption.objects.all()
     permission_classes = [
-        permissions.AllowAny,
+        IsPrivateUploader,
     ]
     serializer_class = CaptionSerializer
+    http_method_names = ['get', 'options', 'head', 'post', 'patch']
 
 
-# image comments API
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     permission_classes = [
         permissions.AllowAny,
     ]
     serializer_class = CommentSerializer
+    http_method_names = default_http_methods
 
     def perform_create(self, serializer):
         serializer.save(commenter=self.request.user)
 
-# users API
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [
         permissions.AllowAny,
     ]
     serializer_class = UserSerializer
+    http_method_names = default_http_methods
+
+    def perform_create(self, serializer):
+        serializer.save(commenter=self.request.user)

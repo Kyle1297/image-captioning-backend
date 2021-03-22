@@ -12,8 +12,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class LimitedCommentSerializer(serializers.ModelSerializer):
     commenter = LimitedUserSerializer(read_only=True)
-    likes = LimitedUserSerializer(read_only=True, many=True)
-    dislikes = LimitedUserSerializer(read_only=True, many=True)
+    likes = LimitedUserSerializer(many=True)
+    dislikes = LimitedUserSerializer(many=True)
 
     class Meta:
         model = Comment
