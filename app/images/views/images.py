@@ -43,7 +43,7 @@ class CaptionViewSet(viewsets.ModelViewSet):
         IsPrivateUploader,
     ]
     serializer_class = CaptionSerializer
-    http_method_names = ['get', 'options', 'head', 'post', 'patch']
+    http_method_names = ['options', 'head', 'post', 'patch']
 
 
 class CommentViewSet(viewsets.ModelViewSet):
