@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from ..models import Image, Caption, Comment, Collection
-from .users import LimitedUserSerializer
+from ..models import Image
+from accounts.serializers import LimitedUserSerializer
 from .collections import LimitedCollectionSerializer
 from .comments import LimitedCommentSerializer
 from .captions import LimitedCaptionSerializer

@@ -7,4 +7,5 @@ urlpatterns = [
     path('admin/', admin.site.urls, name="admin"),
     path('api_v1/images/', include((images, "images"), namespace="images")),
     path('api_v1/utils/', include((utils, "utils"), namespace="utils")),
+    path('api_v1/auth/', include('accounts.urls'), name="accounts"),
 ]

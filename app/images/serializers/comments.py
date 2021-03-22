@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from ..models import Comment
-from .users import LimitedUserSerializer
+from accounts.serializers import LimitedUserSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):

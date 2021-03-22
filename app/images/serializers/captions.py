@@ -19,3 +19,8 @@ class LimitedCaptionSerializer(serializers.ModelSerializer):
             'satisfactory',
             'corrected_text',
         ]
+        extra_kwargs = {
+            'text': {
+                'read_only': True
+            }
+        }

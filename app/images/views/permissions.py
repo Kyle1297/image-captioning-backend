@@ -11,7 +11,6 @@ class IsPrivateUploader(permissions.BasePermission):
     message = 'You must have uploaded this image.'
 
     def has_object_permission(self, request, view, obj):
-        print(type(obj))
         if type(obj) == Image:
             return not obj.is_private or (obj.is_private and obj.uploader == request.user)
         else:

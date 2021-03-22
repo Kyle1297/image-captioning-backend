@@ -1,7 +1,5 @@
 from django.contrib import admin
-from ..models import Profile
-from django.urls import reverse
-from django.utils.html import format_html
+from .models import Profile
 from typing import Any
 from django.contrib.auth.models import User
 
@@ -41,3 +39,7 @@ class ProfileAdmin(admin.ModelAdmin):
         unused.extend([(user.id, user.username) for user in User.objects.filter(profile__isnull=True)])
         form.base_fields['user'].choices = unused
         return form
+
+
+# register admin models
+admin.site.register(Profile, ProfileAdmin)

@@ -1,9 +1,8 @@
 from .filters import ImageFilterSet
 from .permissions import IsPrivateUploader
 from ..models import Image, Collection, Caption, Comment
-from ..serializers import ImageSerializer, CollectionSerializer, CaptionSerializer, UserSerializer, CommentSerializer
-from rest_framework import viewsets, permissions, exceptions
-from django.contrib.auth.models import User
+from ..serializers import ImageSerializer, CollectionSerializer, CaptionSerializer, CommentSerializer
+from rest_framework import viewsets, permissions
 
 
 default_http_methods = ['get', 'options', 'head', 'post', 'patch', 'delete']
@@ -43,7 +42,7 @@ class CaptionViewSet(viewsets.ModelViewSet):
         IsPrivateUploader,
     ]
     serializer_class = CaptionSerializer
-    http_method_names = ['options', 'head', 'post', 'patch']
+    http_method_names = ['options', 'post', 'patch']
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -52,18 +51,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         permissions.AllowAny,
     ]
     serializer_class = CommentSerializer
-    http_method_names = default_http_methods
-
-    def perform_create(self, serializer):
-        serializer.save(commenter=self.request.user)
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    permission_classes = [
-        permissions.AllowAny,
-    ]
-    serializer_class = UserSerializer
     http_method_names = default_http_methods
 
     def perform_create(self, serializer):

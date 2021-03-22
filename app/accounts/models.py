@@ -1,7 +1,4 @@
-from typing import Collection
-
-
-from .collection import Collection
+from images.models import Collection
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
