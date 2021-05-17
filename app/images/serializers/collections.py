@@ -7,13 +7,9 @@ class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collection
         fields = '__all__'
-
-
-class LimitedCollectionSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Collection
-        fields = [
-            'id',
-            'category',
-        ]
+        extra_kwargs = {
+            'creator': {
+                'write_only': True,
+                'required': True,
+            }
+        }

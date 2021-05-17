@@ -1,9 +1,9 @@
-from .filters import ImageFilterSet
+from .pagination import CommentPagination
+from .filters import CollectionFilterSet, CommentFilterSet, ImageFilterSet
 from .permissions import IsPrivateUploader
 from ..models import Image, Collection, Caption, Comment
 from ..serializers import ImageSerializer, CollectionSerializer, CaptionSerializer, CommentSerializer
 from rest_framework import viewsets, permissions
-
 
 default_http_methods = ['get', 'options', 'head', 'post', 'patch', 'delete']
 
@@ -22,9 +22,6 @@ class ImageViewSet(viewsets.ModelViewSet):
             return public | private
         return public
 
-    def perform_create(self, serializer):
-        serializer.save(uploader=self.request.user)
-
 
 class CollectionViewSet(viewsets.ModelViewSet):
     queryset = Collection.objects.all()
@@ -32,6 +29,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         permissions.AllowAny,
     ]
     serializer_class = CollectionSerializer
+    filterset_class = CollectionFilterSet
     http_method_names = default_http_methods
     pagination_class = None
 
@@ -51,7 +49,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         permissions.AllowAny,
     ]
     serializer_class = CommentSerializer
+    filterset_class = CommentFilterSet
     http_method_names = default_http_methods
-
-    def perform_create(self, serializer):
-        serializer.save(commenter=self.request.user)
+    pagination_class = CommentPagination

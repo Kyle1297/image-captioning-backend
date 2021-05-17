@@ -1,11 +1,31 @@
 import boto3, logging
 from typing import List
 from botocore.exceptions import ClientError
+from botocore.config import Config
+from botocore import UNSIGNED
+from django.conf import settings
 
+s3_private_client = boto3.client("s3", 
+                                 config=Config(signature_version='s3v4'),
+                                 region_name=settings.AWS_DEFAULT_REGION,
+                                 aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                                 aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
 
-s3_client = boto3.client('s3')
+s3_public_client = boto3.client('s3', 
+                                config=Config(signature_version=UNSIGNED), 
+                                region_name=settings.AWS_DEFAULT_REGION)
 
-def create_presigned_get(bucket_name: str, object_name: str, expiration: int = 3600) -> dict:
+def create_public_get(bucket_name: str, key: str):
+    public_url = s3_public_client.generate_presigned_url(ClientMethod='get_object', 
+                                                         ExpiresIn=0, 
+                                                         Params={
+                                                             'Bucket': bucket_name, 
+                                                             'Key': key,
+                                                             
+                                                         })
+    return public_url
+
+def create_presigned_get(bucket_name: str, object_name: str, filename: str, expiration: int = 3600) -> dict:
     """
     Generate a presigned URL to share an S3 object.
 
@@ -16,11 +36,12 @@ def create_presigned_get(bucket_name: str, object_name: str, expiration: int = 3
     """
 
     # Generate a presigned URL for the S3 object
-    s3_client = boto3.client('s3')
     try:
-        presigned_get = s3_client.generate_presigned_url('get_object',
+        presigned_get = s3_private_client.generate_presigned_url('get_object',
                                                     Params={'Bucket': bucket_name,
-                                                            'Key': object_name},
+                                                            'Key': object_name,
+                                                            'ResponseContentDisposition': f'attachment; filename={filename}',
+                                                            },
                                                     ExpiresIn=expiration)
     except ClientError as error:
         logging.error(error)
@@ -47,9 +68,8 @@ def create_presigned_post(bucket_name: str, object_name: str, fields: dict = Non
     """
 
     # Generate a presigned S3 POST URL
-    s3_client = boto3.client('s3')
     try:
-        presigned_post = s3_client.generate_presigned_post(bucket_name,
+        presigned_post = s3_private_client.generate_presigned_post(bucket_name,
                                                      object_name,
                                                      Fields=fields,
                                                      Conditions=conditions,

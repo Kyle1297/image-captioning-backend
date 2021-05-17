@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   # service for main application
@@ -18,7 +18,7 @@ services:
   nginx-proxy:
     container_name: nginx-proxy
     image: 669552689704.dkr.ecr.ap-southeast-2.amazonaws.com/image-captioning:nginx-proxy
-    build: 
+    build:
       context: ./nginx
       dockerfile: nginx.dockerfile
     restart: always
@@ -33,7 +33,7 @@ services:
       - dhparam:/etc/nginx/dhparam
     depends_on:
       - backend
-  
+
   # handles creation, renewal and use of Let's Encrypt certificates for proxied containers
   nginx-proxy-letsencrypt:
     container_name: nginx-proxy-letsencrypt
@@ -50,8 +50,8 @@ services:
       - nginx-proxy
 
 volumes:
-  certs:    # stores certificates, private keys and ACME account keys
-  html:     # writes http-01 challenge files
-  vhost:    # changes configuration of vhosts
+  certs: # stores certificates, private keys and ACME account keys
+  html: # writes http-01 challenge files
+  vhost: # changes configuration of vhosts
   acme:
   dhparam:

@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   # NOTE: no db volume as want db to reset on container restart
@@ -10,8 +10,15 @@ services:
     env_file:
       - .env.dev
     ports:
-      - "5432:5432"
-    
+      - '5432:5432'
+
+  # caching, websockets
+  redis:
+    image: redis:6.2.1-alpine
+    container_name: redis
+    ports:
+      - '6379:6379'
+
   backend:
     container_name: backend
     build:
@@ -22,10 +29,11 @@ services:
     env_file:
       - .env.dev
     ports:
-      - "8000:8000"
+      - '8000:8000'
     volumes:
       - ../:/usr/src/
       - /var/run/docker.sock:/var/run/docker.sock
-    depends_on: 
+    depends_on:
       - db
+      - redis
     command: python manage.py runserver 0.0.0.0:8000

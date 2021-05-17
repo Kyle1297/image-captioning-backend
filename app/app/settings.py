@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'django_filters',
     'knox',
     'accounts',
+    'channels',
+    'reports',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +68,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'app.wsgi.application'
+
+ASGI_APPLICATION = 'app.asgi.application'
 
 
 # database
@@ -153,7 +157,7 @@ AWS_S3_SIGNATURE_VERSION = 's3v4'
 # static and media file storage in production
 if USE_S3 == "True":
     STATIC_URL = f'https://{AWS_S3_STATIC_DOMAIN}/'
-    
+
     STATICFILES_STORAGE = 'app.storage_backends.StaticStorage'
 
     DEFAULT_FILE_STORAGE = 'app.storage_backends.MediaStorage'
@@ -181,7 +185,31 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # rest framework configurations
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 3,
+    'PAGE_SIZE': 8,
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',)
+}
+
+# AWS SNS
+CAPTION_TOPIC_ARN = os.environ['CAPTION_TOPIC_ARN']
+
+# websocket
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.environ.get('REDIS_URL', 'redis://redis:6379')],
+        },
+    },
+}
+
+# cache
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": [os.environ.get('REDIS_URL', 'redis://redis:6379')],
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    },
 }

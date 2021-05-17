@@ -13,7 +13,9 @@ class CommentAdmin(admin.ModelAdmin):
         "view_image_link",
         'get_total_likes',
         'get_total_dislikes',
+        'get_total_reports',
         "view_commenter_link",
+        "last_edited",
         "commented_at",
     )
     search_fields = [
@@ -78,3 +80,8 @@ class CommentAdmin(admin.ModelAdmin):
     def get_total_dislikes(self, obj: Comment) -> int:
         return obj.total_dislikes()
     get_total_dislikes.short_description = "Dislikes"
+
+    # show number of reports
+    def get_total_reports(self, obj: Comment) -> int:
+        return obj.total_reports()
+    get_total_reports.short_description = "Reports"

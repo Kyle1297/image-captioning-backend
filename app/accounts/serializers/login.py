@@ -1,44 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from .models import Profile
-from images.serializers import LimitedCollectionSerializer
-from django.contrib.auth.models import User
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    liked_categories = LimitedCollectionSerializer(many=True)
-
-    class Meta:
-        model = Profile
-        fields = [
-            'id',
-            'bio',
-            'liked_categories',
-        ]
-
-
-class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer()
-
-    class Meta:
-        model = User
-        fields = [
-            'id',
-            'username',
-            'email',
-            'profile',
-        ]
-
-
-class LimitedUserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = [
-            'id',
-            'username',
-        ]
+from django.contrib.auth import password_validation as validators
+from django.core import exceptions
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -56,8 +20,42 @@ class RegisterSerializer(serializers.ModelSerializer):
                 'write_only': True
             }
         }
-    
+
+    def validate_email(self, email):
+        """
+        Validate email on registration.
+        """
+        
+        # check for missing email
+        if not email:
+            raise serializers.ValidationError(["This field may not be blank."])
+
+    def validate(self, data):
+        """
+        Validate password on registration.
+        """
+        
+        # retrieve user and their password
+        user = User(**data)
+        password = data['password']
+
+        # validate password and catch exception
+        errors = {}
+        try:
+            validators.validate_password(password=password, user=User)
+        except exceptions.ValidationError as error:
+            errors['password'] = list(error.messages)
+
+        # raise all errors
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return super(RegisterSerializer, self).validate(data)
+
     def create(self, validated_data):
+        """
+        Create user.
+        """
         user = User.objects.create_user(validated_data['username'],
                                         validated_data['email'],
                                         validated_data['password'])

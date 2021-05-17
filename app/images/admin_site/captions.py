@@ -13,6 +13,7 @@ class CaptionAdmin(admin.ModelAdmin):
         "satisfactory",
         "view_image_link",
         "corrected_text",
+        'last_updated',
     )
     list_filter = (
         "satisfactory",
@@ -34,10 +35,10 @@ class CaptionAdmin(admin.ModelAdmin):
    # alter the change view
     def change_view(self, request: HttpRequest, object_id: str) -> HttpResponse:
         self.fields = (
-            "satisfactory",
+            'image',
             "text",
+            "satisfactory",
             "corrected_text",
-            "image",
         )
         return super(CaptionAdmin, self).change_view(request, object_id)
 

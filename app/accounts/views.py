@@ -1,7 +1,10 @@
-from .serializers import LoginSerializer, UserSerializer, RegisterSerializer
+from django.contrib.auth.models import User
+from django.http.request import HttpRequest
+from rest_framework import serializers, viewsets
+from django.http.response import HttpResponse
+from .serializers import LoginSerializer, PublicUserSerializer, UserSerializer, RegisterSerializer
 from rest_framework import generics, permissions, response
 from knox.models import AuthToken
-from django.contrib.auth.models import User
 
 
 class RegisterAPIView(generics.GenericAPIView):
@@ -20,7 +23,7 @@ class RegisterAPIView(generics.GenericAPIView):
 class LoginAPIView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
@@ -30,7 +33,7 @@ class LoginAPIView(generics.GenericAPIView):
         })
 
 
-class UserAPIView(generics.RetrieveAPIView):
+class UserAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [
         permissions.IsAuthenticated,    
     ]
@@ -38,3 +41,18 @@ class UserAPIView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class PublicUserAPIView(generics.RetrieveAPIView):
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+    serializer_class = PublicUserSerializer
+    queryset = User.objects.all()
+
+    def get_object(self):
+        try:
+            user = User.objects.get(username=self.kwargs['username'])
+            return user
+        except Exception:
+            raise serializers.ValidationError("Invalid username received.")
