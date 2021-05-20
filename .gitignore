@@ -1,6 +1,6 @@
 # env
 /dev/.env.dev
-/prod/.env.prod
+/prod/.env
 
 # media files
 /app/mediafiles

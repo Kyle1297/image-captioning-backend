@@ -48,18 +48,6 @@ class Image(models.Model):
     def __str__(self) -> str:
         return f"{textwrap.shorten(self.title, width=50, placeholder='...')}"
 
-    def widthx():
-        images = Image.objects.filter(width=None)
-        for x in images:
-            x.width = 0
-            x.save()
-
-    def heightx():
-        images = Image.objects.filter(height=None)
-        for x in images:
-            x.height = 0
-            x.save()
-
     def save(self, *args, **kwargs):
         """
         Ensure the 'title' field is always capitalized, and the 'type' field is upped on save.

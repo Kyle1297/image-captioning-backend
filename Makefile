@@ -17,13 +17,13 @@ dev-down:
 	docker-compose -f dev/docker-compose.dev.yml down --remove-orphans
 
 prod-up:
-	docker-compose -f prod/docker-compose.prod.yml up -d --build
+	docker-compose -f prod/docker-compose.yml up -d --build
 
 prod-down:
-	docker-compose -f prod/docker-compose.prod.yml down --remove-orphans
+	docker-compose -f prod/docker-compose.yml down --remove-orphans
 
 prod-build:
-	docker-compose -f prod/docker-compose.prod.yml build
+	docker-compose -f prod/docker-compose.yml build
 
 
 # aws ecr
