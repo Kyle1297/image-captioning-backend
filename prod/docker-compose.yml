@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # service for main application
+  backend:
+    container_name: backend
+    image: 669552689704.dkr.ecr.ap-southeast-2.amazonaws.com/image-captioning:backend
+    build:
+      context: ../
+      dockerfile: prod/backend.dockerfile
+    env_file:
+      - .env
+    expose:
+      - 8000
+    depends_on:
+      - redis
+    command: daphne -b 0.0.0.0 -p 8000 app.asgi:application
+
+  # handles routing
+  nginx-proxy:
+    container_name: nginx-proxy
+    image: 669552689704.dkr.ecr.ap-southeast-2.amazonaws.com/image-captioning:nginx-proxy
+    build:
+      context: ./nginx
+      dockerfile: nginx.dockerfile
+    restart: always
+    ports:
+      - 443:443
+      - 80:80
+    volumes:
+      - certs:/etc/nginx/certs
+      - html:/usr/share/nginx/html
+      - vhost:/etc/nginx/vhost.d
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - dhparam:/etc/nginx/dhparam
+    depends_on:
+      - backend
+
+  # handles creation, renewal and use of Let's Encrypt certificates for proxied containers
+  nginx-proxy-letsencrypt:
+    container_name: nginx-proxy-letsencrypt
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    env_file:
+      - .env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - html:/usr/share/nginx/html
+      - vhost:/etc/nginx/vhost.d
+      - acme:/etc/acme.sh
+    depends_on:
+      - nginx-proxy
+
+  # caching, websockets
+  redis:
+    image: redis:6.2.1-alpine
+    container_name: redis
+    ports:
+      - '6379:6379'
+
+volumes:
+  certs: # stores certificates, private keys and ACME account keys
+  html: # writes http-01 challenge files
+  vhost: # changes configuration of vhosts
+  acme:
+  dhparam:
