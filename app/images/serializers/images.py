@@ -57,7 +57,8 @@ class ImageSerializer(serializers.ModelSerializer):
             uploader = User.objects.get(id=uploader['id'])
             image = Image.objects.create(s3_key=key, uploader=uploader, **validated_data)
         else:
-            image = Image.objects.create(s3_key=key, **validated_data)
+            uploader = User.objects.get(username="Anonymous")
+            image = Image.objects.create(s3_key=key, uploader=uploader, **validated_data)
 
         # update user's profile image
         if is_profile_image and uploader:

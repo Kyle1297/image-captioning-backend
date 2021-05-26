@@ -36,7 +36,7 @@ class Image(models.Model):
     is_profile_image = models.BooleanField("Profile image", default=False)
     is_private = models.BooleanField("Private image", default=False)
     collections = models.ManyToManyField(Collection, related_name="images", blank=True)
-    uploader = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="uploaders")
+    uploader = models.ForeignKey(User, on_delete=models.CASCADE, related_name="uploaders")
     likes = models.ManyToManyField(User, related_name="image_likes", blank=True)
     dislikes = models.ManyToManyField(User, related_name="image_dislikes", blank=True)
     views = models.PositiveIntegerField("Views", default=0)

@@ -27,8 +27,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         """
         
         # check for missing email
-        if not email:
-            raise serializers.ValidationError(["This field may not be blank."])
+        if email:
+            return email
+        raise serializers.ValidationError(["This field may not be blank."])
+        
 
     def validate(self, data):
         """
@@ -56,9 +58,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         """
         Create user.
         """
-        user = User.objects.create_user(validated_data['username'],
-                                        validated_data['email'],
-                                        validated_data['password'])
+        user = User.objects.create(username=validated_data['username'],
+                                        email=validated_data['email'],
+                                        password=validated_data['password'])
         return user
 
 

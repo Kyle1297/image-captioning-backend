@@ -46,10 +46,10 @@ pull-nginx:
 
 # ssh transfer and login
 scp-transfer:
-	scp -i $(pw) -r app scripts prod poetry.lock pyproject.toml ubuntu@3.24.64.126:/home/ubuntu/backend
+	scp -i $(pw) -r app scripts prod poetry.lock pyproject.toml ubuntu@13.54.176.52:/home/ubuntu/backend
 
 ssh-login:
-	ssh -i $(pw) ubuntu@3.24.64.126
+	ssh -i $(pw) ubuntu@13.54.176.52
 
 
 # docker shells

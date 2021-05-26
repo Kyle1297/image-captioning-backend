@@ -1,7 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .utils import create_subscription, delete_subscription, generate_s3_key
-from urllib.parse import parse_qs
-import json, requests
+from .utils import create_subscription, delete_subscription
+import json
 
 class CaptionSNSConsumer(AsyncWebsocketConsumer):
 	async def connect(self):

@@ -102,7 +102,7 @@ class BaseUserSerializer(serializers.ModelSerializer):
         uploader = obj.id
         public_count = Image.objects.filter(uploader=uploader, is_private=False, is_profile_image=False).count()
         private_count = Image.objects.filter(uploader=uploader, is_private=True, is_profile_image=False).count()
-        liked_count = Image.objects.filter(uploader=uploader, likes__id=uploader).count()
+        liked_count = Image.objects.filter(likes__id=uploader).count()
         
         return {
             "public": public_count,
