@@ -34,14 +34,8 @@ ecr-login:
 push-backend:
 	docker push $(rep):backend
 
-push-nginx:
-	docker push $(rep):nginx-proxy
-
 pull-backend:
 	docker pull $(rep):backend
-
-pull-nginx:
-	docker pull $(rep):nginx-proxy
 
 
 # ssh transfer and login
