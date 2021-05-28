@@ -6,7 +6,7 @@ www.techwithkyle.com
 
 ## General architecture
 
-This project has been separated into three separate repositories:
+This project has been separated into three repositories:
 
 - [frontend](https://github.com/Kyle1297/image-captioning-frontend)
 - [backend](https://github.com/Kyle1297/image-captioning-backend)
@@ -60,7 +60,7 @@ Key technologies and libraries utilised:
 - Numpy, Keras, Tensorflow, Sklearn, nltk, matplotlib, pandas
 - Subset of the Flickr8k database -> around 40000 images and captions
 
-Large credits go to [Tensorflow](https://www.tensorflow.org/tutorials/text/image_captioning)
+Large credits go to [Tensorflow](https://www.tensorflow.org/tutorials/text/image_captioning).
 
 ## Notes
 
