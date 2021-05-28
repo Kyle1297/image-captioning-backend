@@ -8,7 +8,7 @@ fi
 domains=(techwithkyle.com www.techwithkyle.com)
 rsa_key_size=4096
 data_path="./data/certbot"
-email="kyle@techwithkyle.com"
+email="kyle@techwithkyle.com" # not required, useful for updates on certificate renewals
 staging=0 # Set to 1 for testing
 
 if [ -d "$data_path" ]; then
