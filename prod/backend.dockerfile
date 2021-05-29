@@ -25,8 +25,9 @@ RUN poetry install --no-root --no-dev
 # copy project
 COPY /app/ /usr/src/app/
 
-# copy entrypoint file
+# copy entrypoint file and change permissons
 COPY /scripts/entrypoint.sh /usr/src/scripts/
+RUN chmod +x /usr/src/scripts/entrypoint.sh
 
 # run as non-root user
 RUN adduser --disabled-password --gecos '' user && \
@@ -34,4 +35,4 @@ RUN adduser --disabled-password --gecos '' user && \
 USER user
 
 # run startup process
-CMD [ "/bin/bash", "-c", "chmod +x /usr/src/scripts/entrypoint.sh && /usr/src/scripts/entrypoint.sh" ]
+CMD [ "/bin/bash", "-c", "/usr/src/scripts/entrypoint.sh" ]

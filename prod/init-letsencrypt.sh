@@ -9,7 +9,7 @@ domains=(techwithkyle.com www.techwithkyle.com)
 rsa_key_size=4096
 data_path="./data/certbot"
 email="kyle@techwithkyle.com" # not required, useful for updates on certificate renewals
-staging=0 # Set to 1 for testing
+staging=1 # set to 1 for testing
 
 if [ -d "$data_path" ]; then
   read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision
