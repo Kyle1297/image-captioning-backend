@@ -47,6 +47,8 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
+    "https://www.techwithkyle.com",
+    "https://techwithkyle.com",
 ]
 
 ROOT_URLCONF = 'app.urls'
