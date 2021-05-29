@@ -1,0 +1,158 @@
+{
+	"family": "captionai-td",
+	"executionRoleArn": "arn:aws:iam::396432430368:role/ecsTaskExecutionRole",
+	"containerDefinitions": [
+		{
+			"name": "backend",
+			"image": "396432430368.dkr.ecr.ap-southeast-2.amazonaws.com/captionai:backend",
+			"cpu": 128,
+			"memoryReservation": 128,
+			"essential": true,
+			"portMappings": [
+				{
+					"containerPort": 8000,
+					"hostPort": 8000
+				}
+			],
+			"command": [
+				"daphne",
+				"-b",
+				"0.0.0.0",
+				"-p",
+				"8000",
+				"app.asgi:application"
+			],
+			"dependsOn": [
+				{
+					"condition": "START",
+					"containerName": "redis"
+				}
+			],
+			"secrets": [
+				{
+					"name": "ALLOWED_HOSTS",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/ALLOWED_HOSTS"
+				},
+				{
+					"name": "AWS_DEFAULT_LANGUAGE_CODE",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/AWS_DEFAULT_LANGUAGE_CODE"
+				},
+				{
+					"name": "AWS_DEFAULT_REGION",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/AWS_DEFAULT_REGION"
+				},
+				{
+					"name": "AWS_SECRET_ACCESS_KEY",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/AWS_SECRET_ACCESS_KEY"
+				},
+				{
+					"name": "AWS_STATIC_BUCKET_NAME",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/AWS_STATIC_BUCKET_NAME"
+				},
+				{
+					"name": "DEBUG",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/DEBUG"
+				},
+				{
+					"name": "POSTGRES_PORT",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/POSTGRES_PORT"
+				},
+				{
+					"name": "POSTGRES_USER",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/POSTGRES_USER"
+				},
+				{
+					"name": "SECRET_KEY",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/SECRET_KEY"
+				},
+				{
+					"name": "USE_S3",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/USE_S3"
+				},
+				{
+					"name": "AWS_ACCESS_KEY_ID",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/AWS_ACCESS_KEY_ID"
+				},
+				{
+					"name": "AWS_MEDIA_BUCKET_NAME",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/AWS_MEDIA_BUCKET_NAME"
+				},
+				{
+					"name": "CAPTION_TOPIC_ARN",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/CAPTION_TOPIC_ARN"
+				},
+				{
+					"name": "DATABASE",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/DATABASE"
+				},
+				{
+					"name": "POSTGRES_DB",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/POSTGRES_DB"
+				},
+				{
+					"name": "POSTGRES_HOST",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/POSTGRES_HOST"
+				},
+				{
+					"name": "POSTGRES_PASSWORD",
+					"valueFrom": "arn:aws:ssm:ap-southeast-2:396432430368:parameter/prod/POSTGRES_PASSWORD"
+				}
+			]
+		},
+		{
+			"name": "nginx",
+			"image": "nginx:1.20-alpine",
+			"cpu": 128,
+			"memoryReservation": 128,
+			"essential": true,
+			"mountPoints": [
+				{
+					"containerPath": "/etc/nginx/conf.d",
+					"sourceVolume": "_DataNginx"
+				}
+			],
+			"portMappings": [
+				{
+					"containerPort": 80,
+					"hostPort": 80
+				},
+				{
+					"containerPort": 443,
+					"hostPort": 443
+				}
+			],
+			"command": [
+				"/bin/sh",
+				"-c",
+				"while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\""
+			],
+			"dependsOn": [
+				{
+					"condition": "START",
+					"containerName": "backend"
+				}
+			]
+		},
+		{
+			"name": "redis",
+			"image": "redis:6.2.1-alpine",
+			"cpu": 128,
+			"memoryReservation": 128,
+			"essential": true,
+			"portMappings": [
+				{
+					"containerPort": 6379,
+					"hostPort": 6379
+				}
+			]
+		}
+	],
+	"volumes": [
+		{
+			"name": "_DataNginx",
+			"dockerVolumeConfiguration": {
+				"scope": "task"
+			}
+		}
+	]
+}

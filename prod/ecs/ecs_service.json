@@ -1,0 +1,6 @@
+{
+	"cluster": "captionai-cluster",
+	"serviceName": "captionai-service",
+	"taskDefinition": "captionai-td",
+	"desiredCount": 1
+}

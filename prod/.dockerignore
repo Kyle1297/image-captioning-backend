@@ -12,3 +12,9 @@
 
 # pem files
 captionai.pem
+
+# ecs files
+/prod/ecs/
+
+# sample env files
+prod/sample.env
