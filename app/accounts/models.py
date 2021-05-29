@@ -1,3 +1,4 @@
+from django.conf import settings
 from images.models import Collection, Image
 from django.db import models
 from django.contrib.auth.models import User
@@ -23,7 +24,7 @@ class Profile(models.Model):
         # remove deleted image
         try:
             profile = Profile.objects.get(id=self.id)
-            if profile.image != self.image:
+            if not settings.DEBUG and profile.image != self.image:
                 Image.objects.get(uuid=profile.image.uuid).delete()
         except: 
             pass
