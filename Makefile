@@ -40,10 +40,10 @@ pull-backend:
 
 # ssh transfer and login
 scp-transfer:
-	scp -i $(pw) -r app scripts prod poetry.lock pyproject.toml ubuntu@13.54.176.52:/home/ubuntu/backend
+	scp -i $(pw) -r app scripts prod poetry.lock pyproject.toml ec2-user@3.25.23.208:/home/ec2-user/backend
 
 ssh-login:
-	ssh -i $(pw) ubuntu@13.54.176.52
+	ssh -i $(pw) ec2-user@3.25.23.208
 
 
 # docker shells
@@ -71,3 +71,15 @@ collectstatic:
 # git
 git-push:
 	git push origin HEAD
+
+
+# ecs
+create-task-definition:
+	aws ecs register-task-definition --cli-input-json file://./prod/ecs/task_definition.json
+
+create-service:
+	aws ecs create-service --cli-input-json file://ecs_service.json
+
+ssm-secrets:
+	aws ssm get-parameters-by-path --path $(SECRET_PATH) --query "Parameters[*].{name:Name,valueFrom:ARN}"| \
+	jq --arg replace $(SECRET_PATH) 'walk(if type == "object" and has("name") then .name |= gsub($replace;"") else . end)'
