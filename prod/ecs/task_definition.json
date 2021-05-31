@@ -5,13 +5,27 @@
 		{
 			"name": "backend",
 			"image": "396432430368.dkr.ecr.ap-southeast-2.amazonaws.com/captionai:backend",
-			"cpu": 128,
-			"memoryReservation": 128,
+			"cpu": 256,
+			"memoryReservation": 256,
 			"essential": true,
 			"portMappings": [
 				{
 					"containerPort": 8000,
 					"hostPort": 8000
+				}
+			],
+			"logConfiguration": {
+				"logDriver": "awslogs",
+				"options": {
+					"awslogs-group": "captionai-ecs",
+					"awslogs-region": "ap-southeast-2",
+					"awslogs-stream-prefix": "backend"
+				}
+			},
+			"dependsOn": [
+				{
+					"condition": "START",
+					"containerName": "redis"
 				}
 			],
 			"command": [
@@ -21,12 +35,6 @@
 				"-p",
 				"8000",
 				"app.asgi:application"
-			],
-			"dependsOn": [
-				{
-					"condition": "START",
-					"containerName": "redis"
-				}
 			],
 			"secrets": [
 				{
@@ -100,17 +108,32 @@
 			]
 		},
 		{
-			"name": "nginx",
-			"image": "nginx:1.20-alpine",
-			"cpu": 128,
-			"memoryReservation": 128,
+			"name": "redis",
+			"image": "redis:6.2.1-alpine",
+			"cpu": 256,
+			"memoryReservation": 256,
 			"essential": true,
-			"mountPoints": [
+			"portMappings": [
 				{
-					"containerPath": "/etc/nginx/conf.d",
-					"sourceVolume": "_DataNginx"
+					"containerPort": 6379,
+					"hostPort": 6379
 				}
 			],
+			"logConfiguration": {
+				"logDriver": "awslogs",
+				"options": {
+					"awslogs-group": "captionai-ecs",
+					"awslogs-region": "ap-southeast-2",
+					"awslogs-stream-prefix": "redis"
+				}
+			}
+		},
+		{
+			"name": "nginx",
+			"image": "nginx:1.20-alpine",
+			"cpu": 256,
+			"memoryReservation": 256,
+			"essential": true,
 			"portMappings": [
 				{
 					"containerPort": 80,
@@ -121,38 +144,90 @@
 					"hostPort": 443
 				}
 			],
-			"command": [
-				"/bin/sh",
-				"-c",
-				"while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\""
+			"mountPoints": [
+				{
+					"containerPath": "/etc/nginx/conf.d",
+					"sourceVolume": "_DataNginx"
+				},
+				{
+					"containerPath": "/etc/letsencrypt",
+					"sourceVolume": "_DataCertbotConf"
+				},
+				{
+					"containerPath": "/var/www/certbot",
+					"sourceVolume": "_DataCertbotWww"
+				}
 			],
+			"logConfiguration": {
+				"logDriver": "awslogs",
+				"options": {
+					"awslogs-group": "captionai-ecs",
+					"awslogs-region": "ap-southeast-2",
+					"awslogs-stream-prefix": "nginx"
+				}
+			},
 			"dependsOn": [
 				{
 					"condition": "START",
 					"containerName": "backend"
 				}
+			],
+			"links": ["backend"],
+			"command": [
+				"/bin/sh",
+				"-c",
+				"while :; do sleep 6h & wait $!; nginx -s reload; done & nginx -g \"daemon off;\""
 			]
 		},
 		{
-			"name": "redis",
-			"image": "redis:6.2.1-alpine",
+			"name": "certbot",
+			"image": "certbot/dns-route53",
 			"cpu": 128,
 			"memoryReservation": 128,
 			"essential": true,
-			"portMappings": [
+			"mountPoints": [
 				{
-					"containerPort": 6379,
-					"hostPort": 6379
+					"containerPath": "/etc/letsencrypt",
+					"sourceVolume": "_DataCertbotConf"
+				},
+				{
+					"containerPath": "/var/www/certbot",
+					"sourceVolume": "_DataCertbotWww"
 				}
+			],
+			"logConfiguration": {
+				"logDriver": "awslogs",
+				"options": {
+					"awslogs-group": "captionai-ecs",
+					"awslogs-region": "ap-southeast-2",
+					"awslogs-stream-prefix": "certbot"
+				}
+			},
+			"entryPoint": [
+				"/bin/sh",
+				"-c",
+				"trap exit TERM; while :; do certbot renew; sleep 12h & wait $!; done;"
 			]
 		}
 	],
 	"volumes": [
 		{
-			"name": "_DataNginx",
-			"dockerVolumeConfiguration": {
-				"scope": "task"
-			}
+			"host": {
+				"sourcePath": "/home/ec2-user/prod/data/nginx"
+			},
+			"name": "_DataNginx"
+		},
+		{
+			"host": {
+				"sourcePath": "/home/ec2-user/prod/data/certbot/conf"
+			},
+			"name": "_DataCertbotConf"
+		},
+		{
+			"host": {
+				"sourcePath": "/home/ec2-user/prod/data/certbot/www"
+			},
+			"name": "_DataCertbotWww"
 		}
 	]
 }

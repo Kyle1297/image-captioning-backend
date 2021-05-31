@@ -2,5 +2,8 @@
 	"cluster": "captionai-cluster",
 	"serviceName": "captionai-service",
 	"taskDefinition": "captionai-td",
-	"desiredCount": 1
+	"desiredCount": 1,
+	"deploymentConfiguration": {
+		"minimumHealthyPercent": 0
+	}
 }
