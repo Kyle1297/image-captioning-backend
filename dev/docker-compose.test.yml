@@ -7,6 +7,8 @@ services:
     build:
       context: .
       dockerfile: postgres.dockerfile
+    env_file:
+      - sample.env.dev
     ports:
       - '5432:5432'
 
@@ -25,6 +27,8 @@ services:
       dockerfile: dev/backend.dev.dockerfile
       args:
         INSTALL_DEV: 'true'
+    env_file:
+      - sample.env.dev
     ports:
       - '8000:8000'
     volumes:
