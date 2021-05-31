@@ -5,7 +5,7 @@ from rest_framework import serializers
 from ..models import Image, Caption, Collection
 from reports.serializers import ImageReportSerializer
 from reports.models import ImageReport
-from accounts.serializers import LimitedUserSerializer
+from accounts.serializers.user import LimitedUserSerializer
 from .collections import CollectionSerializer
 from .captions import CaptionSerializer
 from django.contrib.auth.models import User

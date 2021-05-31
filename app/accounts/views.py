@@ -2,7 +2,8 @@ from django.contrib.auth.models import User
 from django.http.request import HttpRequest
 from rest_framework import serializers, viewsets
 from django.http.response import HttpResponse
-from .serializers import LoginSerializer, PublicUserSerializer, UserSerializer, RegisterSerializer
+from .serializers.user import PublicUserSerializer, UserSerializer
+from .serializers.login import LoginSerializer, RegisterSerializer
 from rest_framework import generics, permissions, response
 from knox.models import AuthToken
 

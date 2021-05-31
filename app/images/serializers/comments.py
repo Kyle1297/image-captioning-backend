@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from ..models import Comment
-from accounts.serializers import LimitedUserSerializer
+from accounts.serializers.user import LimitedUserSerializer
 from reports.serializers import CommentReportSerializer
 from reports.models import CommentReport
 
