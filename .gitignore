@@ -7,7 +7,7 @@
 /app/staticfiles
 
 # db backups
-/dev/db_backup/db_backup.sql
+/dev/db_backup
 
 # pem and https files
 captionai.pem
