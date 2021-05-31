@@ -9,5 +9,6 @@
 # db backups
 /dev/db_backup/db_backup.sql
 
-# pem files
+# pem and https files
 captionai.pem
+prod/data/certbot
