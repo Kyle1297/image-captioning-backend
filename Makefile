@@ -8,7 +8,6 @@ db-import:
 db-shell:
 	psql -U $(user) -d $(db)
 
-
 # docker up/down
 dev-up:
 	docker-compose -f dev/docker-compose.dev.yml up -d --build
@@ -25,7 +24,6 @@ prod-down:
 prod-build:
 	docker-compose -f prod/docker-compose.yml build
 
-
 # aws ecr
 ecr-login:
 	aws ecr get-login-password --region $(reg) | \
@@ -37,14 +35,12 @@ push-backend:
 pull-backend:
 	docker pull $(rep):backend
 
-
 # ssh transfer and login
 scp-transfer:
-	scp -i $(pw) -r app scripts prod poetry.lock pyproject.toml ec2-user@3.25.23.208:/home/ec2-user/backend
+	scp -i $(pw) -r prod ec2-user@3.25.23.208:/home/ec2-user
 
 ssh-login:
 	ssh -i $(pw) ec2-user@3.25.23.208
-
 
 # docker shells
 backend-shell:
@@ -52,7 +48,6 @@ backend-shell:
 
 db-shell:
 	docker exec -it db /bin/bash
-
 
 # django
 migrate:
@@ -67,18 +62,16 @@ superuser:
 collectstatic:
 	python manage.py collectstatic --no-input
 
-
 # git
 git-push:
 	git push origin HEAD
-
 
 # ecs
 create-task-definition:
 	aws ecs register-task-definition --cli-input-json file://./prod/ecs/task_definition.json
 
 create-service:
-	aws ecs create-service --cli-input-json file://ecs_service.json
+	aws ecs create-service --cli-input-json file://./prod/ecs/ecs_service.json
 
 ssm-secrets:
 	aws ssm get-parameters-by-path --path $(SECRET_PATH) --query "Parameters[*].{name:Name,valueFrom:ARN}"| \
