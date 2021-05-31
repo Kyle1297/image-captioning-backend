@@ -4,11 +4,11 @@ services:
   # NOTE: no db volume as want db to reset on container restart
   db:
     container_name: db
+    image: postgres:13.2-alpine
     build:
       context: .
-      dockerfile: postgres.dockerfile
     env_file:
-      - sample.env.dev
+      - .env.test
     ports:
       - '5432:5432'
 
@@ -24,11 +24,9 @@ services:
     container_name: backend
     build:
       context: ../
-      dockerfile: dev/backend.dev.dockerfile
-      args:
-        INSTALL_DEV: 'true'
+      dockerfile: test/backend.test.dockerfile
     env_file:
-      - sample.env.dev
+      - .env.test
     ports:
       - '8000:8000'
     volumes:
@@ -37,4 +35,3 @@ services:
     depends_on:
       - db
       - redis
-    command: python manage.py runserver 0.0.0.0:8000
