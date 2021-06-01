@@ -26,7 +26,7 @@ RUN poetry install --no-root
 COPY /app/ /usr/src/
 
 # copy entrypoint file
-COPY /scripts/entrypoint.dev.sh /usr/src/scripts/
+COPY /scripts/entrypoint.test.sh /usr/src/scripts/
 
 # run startup process
-ENTRYPOINT [ "/usr/src/scripts/entrypoint.dev.sh" ]
+ENTRYPOINT [ "/usr/src/scripts/entrypoint.test.sh" ]
