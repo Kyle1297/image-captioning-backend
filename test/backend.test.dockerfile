@@ -25,8 +25,9 @@ RUN poetry install --no-root
 # copy project
 COPY /app/ /usr/src/
 
-# copy entrypoint file
+# copy entrypoint file and change permissons
 COPY /scripts/entrypoint.test.sh /usr/src/scripts/
+RUN chmod +x /usr/src/scripts/entrypoint.test.sh
 
 # run startup process
 ENTRYPOINT [ "/usr/src/scripts/entrypoint.test.sh" ]
