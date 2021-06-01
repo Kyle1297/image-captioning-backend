@@ -13,6 +13,7 @@ env:
   ECR_REPOSITORY: captionai
   ECS_SERVICE: captionai-service
   ECS_CLUSTER: captionai-cluster
+  ECS_TASK_DEFINITION: prod/ecs/task_definition.json
 
 jobs:
   test:
@@ -43,7 +44,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: $AWS_REGION
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: login to ECR
         id: login-ecr
@@ -63,14 +64,14 @@ jobs:
         id: update-td
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: prod/ecs/task_definition.json
           container-name: backend
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
           image: ${{ steps.build-image.outputs.image }}
 
       - name: deploy ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.update-td.outputs.task-definition }}
-          service: $ECS_SERVICE
-          cluster: $ECS_CLUSTER
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
