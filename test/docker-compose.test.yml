@@ -5,8 +5,6 @@ services:
   db:
     container_name: db
     image: postgres:13.2-alpine
-    build:
-      context: .
     env_file:
       - .env.test
     ports:
