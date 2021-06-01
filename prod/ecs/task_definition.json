@@ -28,6 +28,7 @@
 					"containerName": "redis"
 				}
 			],
+			"links": ["redis"],
 			"command": [
 				"daphne",
 				"-b",
