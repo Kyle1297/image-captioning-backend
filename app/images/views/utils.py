@@ -68,24 +68,26 @@ class CaptionSNS(views.APIView):
 
         # handle notification from lambda caption generator 
         elif data["Type"] == 'Notification':
-            # retrieve key parameters
-            message = json.loads(data["Message"])
-            key = message["requestPayload"]["Records"][0]["s3"]["object"]["key"]
-            uuid = key.split("/")[-1].split(".")[0]
+            try:
+                # retrieve key parameters
+                message = json.loads(data["Message"])
+                key = message["requestPayload"]["Records"][0]["s3"]["object"]["key"]
+                uuid = key.split("/")[-1].split(".")[0]
 
-            # send caption to channel
-            if uuid == kwargs['uuid']:
-                caption = upper_text(message["responsePayload"])
-                layer = get_channel_layer()
-                async_to_sync(layer.group_send)(
-                    uuid, 
-                    {
-                        "type": "caption", 
-                        "caption": caption ,
-                    }
-                )
-                return response.Response("Correct notification received.")
-            return response.Response("Wrong notification received.")
+                # send caption to channel
+                if uuid == kwargs['uuid']:
+                    caption = upper_text(message["responsePayload"])
+                    layer = get_channel_layer()
+                    async_to_sync(layer.group_send)(
+                        uuid, 
+                        {
+                            "type": "caption", 
+                            "caption": caption ,
+                        }
+                    )
+                    return response.Response("Correct notification received.")
+            except Exception:
+                return response.Response("Wrong notification received.")
         return response.Response("Neither subscription confirmation or notification was received.")
 
     def confirm_subscription(self, data):

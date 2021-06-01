@@ -66,9 +66,10 @@ class ImageSerializer(serializers.ModelSerializer):
             uploader.save()
 
         # add collections to image and create associated caption
-        elif caption and collection_ids:
-            collections = Collection.objects.filter(id__in=collection_ids)
-            image.collections.set(collections)
+        elif caption:
+            if collection_ids:
+                collections = Collection.objects.filter(id__in=collection_ids)
+                image.collections.set(collections)
             Caption.objects.create(text=caption['text'], corrected_text="", image=image)
 
         return image
